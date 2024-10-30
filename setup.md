@@ -1,0 +1,3 @@
+- run ```docker compose up -d```
+- run ```docker exec -it <container_id> composer install```
+- run ```docker exec -it <container_id> php bin/console doctrine:database:create```

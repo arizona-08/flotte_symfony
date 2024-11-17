@@ -29,6 +29,9 @@ class Vehicles
     #[ORM\Column]
     private ?int $nb_serie = null;
 
+    #[ORM\ManyToOne(inversedBy: 'vehicles')]
+    private ?Agencies $agencies = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -90,6 +93,18 @@ class Vehicles
     public function setNbSerie(int $nb_serie): static
     {
         $this->nb_serie = $nb_serie;
+
+        return $this;
+    }
+
+    public function getAgencies(): ?Agencies
+    {
+        return $this->agencies;
+    }
+
+    public function setAgencies(?Agencies $agencies): static
+    {
+        $this->agencies = $agencies;
 
         return $this;
     }

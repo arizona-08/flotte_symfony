@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\AgenciesRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -31,6 +33,20 @@ class Agencies
 
     #[ORM\Column(nullable: true)]
     private ?int $zip_code = null;
+
+    #[ORM\ManyToOne(inversedBy: 'agencies')]
+    private ?Users $users = null;
+
+    /**
+     * @var Collection<int, vehicles>
+     */
+    #[ORM\OneToMany(targetEntity: vehicles::class, mappedBy: 'agencies')]
+    private Collection $vehicles;
+
+    public function __construct()
+    {
+        $this->vehicles = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -105,6 +121,48 @@ class Agencies
     public function setZipCode(?int $zip_code): static
     {
         $this->zip_code = $zip_code;
+
+        return $this;
+    }
+
+    public function getUsers(): ?Users
+    {
+        return $this->users;
+    }
+
+    public function setUsers(?Users $users): static
+    {
+        $this->users = $users;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, vehicles>
+     */
+    public function getVehicles(): Collection
+    {
+        return $this->vehicles;
+    }
+
+    public function addVehicle(vehicles $vehicle): static
+    {
+        if (!$this->vehicles->contains($vehicle)) {
+            $this->vehicles->add($vehicle);
+            $vehicle->setAgencies($this);
+        }
+
+        return $this;
+    }
+
+    public function removeVehicle(vehicles $vehicle): static
+    {
+        if ($this->vehicles->removeElement($vehicle)) {
+            // set the owning side to null (unless already changed)
+            if ($vehicle->getAgencies() === $this) {
+                $vehicle->setAgencies(null);
+            }
+        }
 
         return $this;
     }
